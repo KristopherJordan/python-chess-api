@@ -2,10 +2,6 @@ from abc import ABCMeta
 
 WHITE = "white"
 BLACK = "black"
-DIAGONAL = "diagonal"
-UP = "up"
-DOWN = "down"
-SIDE = "side"
 
 cardinals = [(1, 0), (0, 1), (-1, 0), (0, -1)]
 diagonals = [(1, 1), (-1, 1), (1, -1), (-1, -1)]
@@ -13,7 +9,7 @@ diagonals = [(1, 1), (-1, 1), (1, -1), (-1, -1)]
 
 class Pieces(metaclass=ABCMeta):
 
-    def __init__(self, colour=""):
+    def __init__(self, colour="", position=None):
         colour = colour.lower()
         if colour not in [WHITE, BLACK]:
             print("Wrong input colour: '%s'" % colour)
@@ -21,7 +17,7 @@ class Pieces(metaclass=ABCMeta):
 
         self.colour = colour
         self.name = ""
-        self.position = [0, 0]
+        self.position = position
         self.abbreviation = None
 
         self.validate()
@@ -32,9 +28,16 @@ class Pieces(metaclass=ABCMeta):
     def validate(self):
         print("Not implemented")
 
-    def legal_movement(self, board, position):
-        """ [(X, Y)]"""
+    def is_movement_valid(self, board, position):
+        """ [(Y, X)]"""
         print("Not implemented")
+
+    def remove(self):
+        print("removing %s" % self)
+        self.position = None
+
+    def is_kill_valid(self, other_piece):
+        pass
 
 
 class King(Pieces):
@@ -48,8 +51,8 @@ class King(Pieces):
         else:
             self.position = [0, 4]
 
-    def legal_movement(self, board, position):
-        return [UP, DOWN, DIAGONAL, SIDE], 8
+    def is_movement_valid(self, board, position):
+        return
 
 
 class Queen(Pieces):
@@ -63,8 +66,8 @@ class Queen(Pieces):
         else:
             self.position = [0, 3]
 
-    def legal_movement(self, board, position):
-        return [UP, DOWN, DIAGONAL, SIDE], 1
+    def is_movement_valid(self, board, position):
+        return
 
 
 class Pawn(Pieces):
@@ -73,19 +76,28 @@ class Pawn(Pieces):
         self.name = "Pawn"
         self.abbreviation = "P"
 
-    def legal_movement(self, board, position):
+    def is_movement_valid(self, board, position):
         if position[1] - self.position[1] not in [-1, 0, 1]:
             print("Cant move diagonally with %s" % self.name)
             return False
         if self.colour == BLACK:
-            if self.position[0] == 7:
+            if self.position[0] == 1:
                 print("First move Black")
-                return self.position[0] - position[0] in [1, 2]
-            return self.position[0] - position[0] == 1
-        if self.position[0] == 1:
+                return position[0] - self.position[0] in [1, 2]
+            return position[0] - self.position[0] == 1
+        if self.position[0] == 7:
             print("First move White")
             return position[0] - self.position[0] in [1, 2]
-        return position[0] - self.position[0] == 1
+        return self.position[0] - position[0] == 1
+
+    def is_kill_valid(self, other_piece):
+        if self.colour == other_piece.colour:
+            print("Both pieces are %s" % self.colour)
+            return False
+        if self.position[1] - other_piece.position[1] not in [1, -1]:
+            print("%s can only kill diagonally" % self)
+            return False
+        return True
 
 
 class Bishop(Pieces):
@@ -94,8 +106,8 @@ class Bishop(Pieces):
         self.name = "Bishop"
         self.abbreviation = "B"
 
-    def legal_movement(self, board, position):
-        return [DIAGONAL], 8
+    def is_movement_valid(self, board, position):
+        return
 
 
 class Knight(Pieces):
@@ -104,9 +116,9 @@ class Knight(Pieces):
         self.name = "Knight"
         self.abbreviation = "KN"
 
-    def legal_movement(self, board, position):
+    def is_movement_valid(self, board, position):
         # TODO: hmm
-        return [UP, SIDE], 8
+        return
 
 
 class Rook(Pieces):
@@ -115,7 +127,6 @@ class Rook(Pieces):
         self.name = "Rook"
         self.abbreviation = "R"
 
-
-    def legal_movement(self, board, position):
-        return [UP, SIDE], 8
+    def is_movement_valid(self, board, position):
+        return
 
