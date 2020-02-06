@@ -25,7 +25,7 @@ class Board:
             raise Exception("Move %s to %s is not valid" % (piece, new_position))
 
         self._place_piece(piece, new_position)
-        self.print_board()
+        print(self.print_board())
 
     def _place_piece(self, piece, new_position):
         existing_piece = self._board[new_position[0]][new_position[1]]
@@ -106,11 +106,11 @@ class Board:
             self._board[row][i] = pawn
 
     def print_board(self):
-        headers = "   |   A  |  B  |  C  |  D  |  E  |  F  |  G  |  H  |"
+        headers = "\n   |   A  |  B  |  C  |  D  |  E  |  F  |  G  |  H  |\n "
+        return_string = """%s""" % headers
+        return_string += '\n'.join(["%s | %s" % (i, row) for i, row in enumerate(self._board)])
+        return_string += headers
+        return return_string
 
-        print(headers)
-        for i, row in enumerate(self._board):
-            print("%s | %s" % (i, row))
-        print(headers)
 
-#uniDict = {WHITE : {Pawn : "♙", Rook : "♖", Knight : "♘", Bishop : "♗", King : "♔", Queen : "♕" }, BLACK : {Pawn : "♟", Rook : "♜", Knight : "♞", Bishop : "♝", King : "♚", Queen : "♛" }}
+# {WHITE : {Pawn : "♙", Rook : "♖", Knight : "♘", Bishop : "♗", King : "♔", Queen : "♕" }, BLACK : {Pawn : "♟", Rook : "♜", Knight : "♞", Bishop : "♝", King : "♚", Queen : "♛" }}
