@@ -1,4 +1,5 @@
-from models.pieces import King, Queen, Pawn, Bishop, Rook, Knight, WHITE, BLACK
+from models.pieces import King, Queen, Pawn, Bishop, Rook, Knight, WHITE, BLACK, Pieces
+from services.utils import Y_INVERTER
 
 
 class Board:
@@ -104,6 +105,14 @@ class Board:
         for i in range(8):
             pawn = Pawn(colour, (row, i))
             self._board[row][i] = pawn
+
+    def to_dict(self):
+        board = []
+        for i, row in enumerate(self._board):
+            row_dict = ["%s %s" % (x.colour, x.name) if isinstance(x, Pieces) else None for x in row]
+            board.append([{"row": Y_INVERTER[str(i)]}, {"data": row_dict}])
+
+        return board
 
     def print_board(self):
         headers = "\n   |   A  |  B  |  C  |  D  |  E  |  F  |  G  |  H  |\n "

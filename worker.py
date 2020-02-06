@@ -34,7 +34,7 @@ def start():
         game = start_game(player1, player2)
 
         GAMES[str(game.id)] = game
-        return_data = {"game": game.board.print_board(), "id": game.id}
+        return_data = {"game": game.board.to_dict(), "id": game.id}
         return jsonify(return_data)
     except Exception as ex:
         print("Exception: %s" % ex)
@@ -58,7 +58,7 @@ def move_piece(game_id):
 
         game = do_move(player, game, position, new_position)
 
-        return_data = {"game": game.board.print_board(), "id": game.id}
+        return_data = {"game": game.board.to_dict(), "id": game.id}
         print("Finished moving piece: %s" % return_data)
         return jsonify(return_data)
     except Exception as ex:
