@@ -21,5 +21,4 @@ def convert_position(position):
 
     x = X_CONVERTER[position[0].lower()]
     y = Y_CONVERTER[position[1].lower()]
-    print("converted position to: %s %s" % (y, x))
     return (y, x)

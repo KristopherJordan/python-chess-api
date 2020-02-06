@@ -1,4 +1,7 @@
+import logging
 from abc import ABCMeta
+
+logger = logging.getLogger(__name__)
 
 WHITE = "white"
 BLACK = "black"
@@ -12,7 +15,7 @@ class Pieces(metaclass=ABCMeta):
     def __init__(self, colour="", position=None):
         colour = colour.lower()
         if colour not in [WHITE, BLACK]:
-            print("Wrong input colour: '%s'" % colour)
+            logger.info("Wrong input colour: '%s'" % colour)
             raise Exception("Wrong Colour Exception")
 
         self.colour = colour
@@ -26,14 +29,14 @@ class Pieces(metaclass=ABCMeta):
         return "%s %s" % (self.colour, self.abbreviation)
 
     def validate(self):
-        print("Not implemented")
+        logger.info("Not implemented")
 
     def is_movement_valid(self, board, position):
         """ [(Y, X)]"""
-        print("Not implemented")
+        logger.info("Not implemented")
 
     def remove(self):
-        print("removing %s" % self)
+        logger.info("removing %s" % self)
         self.position = None
 
     def is_kill_valid(self, other_piece):
@@ -78,24 +81,24 @@ class Pawn(Pieces):
 
     def is_movement_valid(self, board, position):
         if position[1] - self.position[1] not in [-1, 0, 1]:
-            print("Cant move diagonally with %s" % self.name)
+            logger.info("Cant move diagonally with %s" % self.name)
             return False
         if self.colour == BLACK:
             if self.position[0] == 1:
-                print("First move Black")
+                logger.info("First move Black")
                 return position[0] - self.position[0] in [1, 2]
             return position[0] - self.position[0] == 1
         if self.position[0] == 7:
-            print("First move White")
+            logger.info("First move White")
             return position[0] - self.position[0] in [1, 2]
         return self.position[0] - position[0] == 1
 
     def is_kill_valid(self, other_piece):
         if self.colour == other_piece.colour:
-            print("Both pieces are %s" % self.colour)
+            logger.info("Both pieces are %s" % self.colour)
             return False
         if self.position[1] - other_piece.position[1] not in [1, -1]:
-            print("%s can only kill diagonally" % self)
+            logger.info("%s can only kill diagonally" % self)
             return False
         return True
 

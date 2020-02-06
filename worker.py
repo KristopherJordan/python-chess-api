@@ -1,8 +1,12 @@
+import logging
+
 from flask import Flask, render_template, request, jsonify
 
 from models.players import Player
 from models.pieces import WHITE, BLACK
 from services.play import start_game, do_move
+
+logger = logging.getLogger(__name__)
 
 # Caching the players by name and games by id
 GAMES = {}
@@ -34,17 +38,25 @@ def start():
         game = start_game(player1, player2)
 
         GAMES[str(game.id)] = game
-        return_data = {"game": game.board.to_dict(), "id": game.id}
+        return_data = {
+            "game": game.board.to_dict(),
+            "id": game.id,
+            "players":
+                {
+                    "white": player1.name,
+                    "black": player2.name,
+                }
+        }
         return jsonify(return_data)
     except Exception as ex:
-        print("Exception: %s" % ex)
-        return jsonify("Error %s" % ex)
+        logger.info("Exception: %s" % ex)
+        return jsonify("Error %s" % ex)  # TODO: Raise HTTP error
 
 
 @app.route("/move/<path:game_id>", methods=["PUT"])
 def move_piece(game_id):
     data = request.json
-    print("Starting to move piece: %s | game: %s" % (data, game_id))
+    logger.info("Starting to move piece: %s | game: %s" % (data, game_id))
     try:
         name = data['player'].lower()
         position = data['position']
@@ -59,11 +71,11 @@ def move_piece(game_id):
         game = do_move(player, game, position, new_position)
 
         return_data = {"game": game.board.to_dict(), "id": game.id}
-        print("Finished moving piece: %s" % return_data)
+        logger.info("Finished moving piece: %s" % return_data)
         return jsonify(return_data)
     except Exception as ex:
-        print("Exception: %s" % ex)
-        return jsonify("Error: %s" % ex)
+        logger.info("Exception: %s" % ex)
+        return jsonify("Error: %s" % ex)  # TODO: Raise HTTP error
 
 
 if __name__ == "__main__":

@@ -1,6 +1,10 @@
+import logging
 import random
 
 from models.boards import Board
+from models.pieces import WHITE
+
+logger = logging.getLogger(__name__)
 
 
 class Game:
@@ -25,10 +29,13 @@ class Game:
 
     def validate_turn(self, player):
         if not self.moves:
+            if player.colour != WHITE:
+                logger.info("%s colour cant start the game")
+                return False
             return True
 
         if self.moves[-1]["player"] == player:
-            print("Not %s's turn" % player)
+            logger.info("Not %s's turn" % player)
             return False
 
         return True

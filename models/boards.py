@@ -1,5 +1,9 @@
+import logging
+
 from models.pieces import King, Queen, Pawn, Bishop, Rook, Knight, WHITE, BLACK, Pieces
-from services.utils import Y_INVERTER
+from services.utils import Y_INVERTER, X_INVERTER
+
+logger = logging.getLogger(__name__)
 
 
 class Board:
@@ -20,41 +24,40 @@ class Board:
             raise Exception("New Position: %s Not In Bounds" % new_position)
 
         piece = self._board[position[0]][position[1]]
-        print(piece)
 
         if not self._is_move_valid(piece, new_position):
             raise Exception("Move %s to %s is not valid" % (piece, new_position))
 
         self._place_piece(piece, new_position)
-        print(self.print_board())
+        logger.info(self.print_board())
 
     def _place_piece(self, piece, new_position):
         existing_piece = self._board[new_position[0]][new_position[1]]
         if existing_piece:
-            print("Existing piece: %s  | taken by: %s" % (existing_piece, piece))
+            logger.info("Existing piece: %s  | taken by: %s" % (existing_piece, piece))
             existing_piece.remove()
             self._board[piece.position[0]][piece.position[1]] = None
             self._board[new_position[0]][new_position[1]] = piece
             piece.position = new_position
         else:
-            print("placing piece %s to %s" % (piece, new_position))
+            logger.info("placing piece %s to %s" % (piece, new_position))
             self._board[piece.position[0]][piece.position[1]] = None
             self._board[new_position[0]][new_position[1]] = piece
             piece.position = new_position
 
-        print("Moved %s to %s" % (piece, piece.position))
+        logger.info("Moved %s to %s" % (piece, piece.position))
 
     def _is_move_valid(self, piece, new_position):
         if not piece.is_movement_valid(self._board, new_position):
-            print("Not Legal Movement: %s for piece: %s" % (new_position, piece))
+            logger.info("Not Legal Movement: %s for piece: %s" % (new_position, piece))
             return False
         existing_piece = self._board[new_position[0]][new_position[1]]
         if existing_piece:
-            print("%s is occupied by %s" % (new_position, existing_piece))
+            logger.info("%s is occupied by %s" % (new_position, existing_piece))
             if not piece.is_kill_valid(existing_piece):
                 return False
 
-        print("valid move")
+        logger.info("valid move")
         return True
 
     @staticmethod
@@ -109,8 +112,9 @@ class Board:
     def to_dict(self):
         board = []
         for i, row in enumerate(self._board):
-            row_dict = ["%s %s" % (x.colour, x.name) if isinstance(x, Pieces) else None for x in row]
-            board.append([{"row": Y_INVERTER[str(i)]}, {"data": row_dict}])
+            row_dict = {X_INVERTER[str(x)]: "%s %s" % (r.colour, r.name) if isinstance(r, Pieces) else "None" for x, r in enumerate(row)}
+            # row_dict = [{X_INVERTER[str(x)]: "%s %s" % (r.colour, r.name)} if isinstance(r, Pieces) else {"%s" % X_INVERTER[str(x): "None"]} for x, r in enumerate(row)]
+            board.append({"row": i + 1, "data": row_dict})
 
         return board
 
