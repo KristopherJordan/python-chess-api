@@ -19,7 +19,7 @@ Example with `pyenv`:
 
 Returns an HTTP 200 OK. The payload contains the following keys: `game` and `id` and `players`.
 
-Use the ID to continue to play using the `/move/<ID>` endpoint. Like http://127.0.0.1:5000/move/<ID>
+Use the ID to continue to play using the `/move/<ID>` endpoint. Like http://127.0.0.1:5000/move/ID
 
 The `move` payload should contain the player name, the position of the piece you want to move and the
 position of where you want to move the piece to.
