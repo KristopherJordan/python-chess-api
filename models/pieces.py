@@ -15,7 +15,7 @@ class Pieces(metaclass=ABCMeta):
     def __init__(self, colour="", position=None):
         colour = colour.lower()
         if colour not in [WHITE, BLACK]:
-            logger.info("Wrong input colour: '%s'" % colour)
+            logger.info("Wrong input colour: '%s'", colour)
             raise Exception("Wrong Colour Exception")
 
         self.colour = colour
@@ -36,7 +36,7 @@ class Pieces(metaclass=ABCMeta):
         logger.info("Not implemented")
 
     def remove(self):
-        logger.info("removing %s" % self)
+        logger.info("removing %s", self)
         self.position = None
 
     def is_kill_valid(self, other_piece):
@@ -81,7 +81,7 @@ class Pawn(Pieces):
 
     def is_movement_valid(self, board, position):
         if position[1] - self.position[1] not in [-1, 0, 1]:
-            logger.info("Cant move diagonally with %s" % self.name)
+            logger.info("Cant move diagonally with %s", self.name)
             return False
         if self.colour == BLACK:
             if self.position[0] == 1:
@@ -98,7 +98,7 @@ class Pawn(Pieces):
             logger.info("Both pieces are %s" % self.colour)
             return False
         if self.position[1] - other_piece.position[1] not in [1, -1]:
-            logger.info("%s can only kill diagonally" % self)
+            logger.info("%s can only kill diagonally", self)
             return False
         return True
 

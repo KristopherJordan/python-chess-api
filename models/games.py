@@ -35,7 +35,7 @@ class Game:
             return True
 
         if self.moves[-1]["player"] == player:
-            logger.info("Not %s's turn" % player)
+            logger.info("Not %s's turn", player)
             return False
 
         return True

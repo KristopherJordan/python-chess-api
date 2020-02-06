@@ -6,6 +6,8 @@ from models.players import Player
 from models.pieces import WHITE, BLACK
 from services.play import start_game, do_move
 
+logging.basicConfig(level=logging.DEBUG)
+
 logger = logging.getLogger(__name__)
 
 # Caching the players by name and games by id
@@ -24,6 +26,7 @@ def hello():
 @app.route("/start", methods=["POST"])
 def start():
     data = request.json
+    logger.info("Starting new game: %s", data)
     try:
         # Create players
         player1_name = data['player1']['name'].lower()
@@ -49,14 +52,14 @@ def start():
         }
         return jsonify(return_data)
     except Exception as ex:
-        logger.info("Exception: %s" % ex)
+        logger.error("Exception: %s", ex)
         return jsonify("Error %s" % ex)  # TODO: Raise HTTP error
 
 
 @app.route("/move/<path:game_id>", methods=["PUT"])
 def move_piece(game_id):
     data = request.json
-    logger.info("Starting to move piece: %s | game: %s" % (data, game_id))
+    logger.info("Starting to move piece: %s | game ID: %s", data, game_id)
     try:
         name = data['player'].lower()
         position = data['position']
@@ -74,10 +77,10 @@ def move_piece(game_id):
         game = do_move(player, game, position, new_position)
 
         return_data = {"game": game.board.to_dict(), "id": game.id}
-        logger.info("Finished moving piece: %s" % return_data)
+        logger.info("Finished moving piece: %s", return_data)
         return jsonify(return_data)
     except Exception as ex:
-        logger.info("Exception: %s" % ex)
+        logger.error("Exception: %s", ex)
         return jsonify("Error: %s" % ex)  # TODO: Raise HTTP error
 
 
