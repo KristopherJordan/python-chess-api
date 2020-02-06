@@ -61,6 +61,9 @@ def move_piece(game_id):
         name = data['player'].lower()
         position = data['position']
         new_position = data['new_position']
+        if name not in PLAYERS:
+            raise Exception("%s is not a player with a running game" % name)
+
         player = PLAYERS[name]
 
         if game_id not in GAMES:

@@ -24,7 +24,7 @@ class Game:
             raise Exception("Turn Not Valid")
 
         self.board.move_piece(position, new_position)
-        self.moves.append({"player": player, "board": self.board})  # TODO: Assure its current board
+        self.moves.append({"player": player, "board": self.board})
         return self.board
 
     def validate_turn(self, player):
