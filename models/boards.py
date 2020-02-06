@@ -1,7 +1,7 @@
 import logging
 
 from models.pieces import King, Queen, Pawn, Bishop, Rook, Knight, WHITE, BLACK, Pieces
-from services.utils import X_INVERTER
+from services.utils import Y_INVERTER, X_INVERTER, readable_position
 
 logger = logging.getLogger(__name__)
 
@@ -13,7 +13,7 @@ class Board:
         self._create_empty_board()
         self.print_board()
 
-    def move_piece(self, position, new_position):
+    def move_piece(self, position, new_position, player):
         if not (isinstance(position, tuple) or isinstance(new_position, tuple)):
             raise Exception("Position Needs To Be A Tuple")  # TODO: Raise 403
 
@@ -24,9 +24,11 @@ class Board:
             raise Exception("New Position: %s Not In Bounds" % new_position)
 
         piece = self._board[position[0]][position[1]]
+        if piece.colour != player.colour:
+            raise Exception("Not allowed to move opponents pieces")
 
         if not self._is_move_valid(piece, new_position):
-            raise Exception("Move %s to %s is not valid" % (piece, new_position))
+            raise Exception("Move %s to %s is not valid" % (piece, readable_position(new_position)))
 
         self._place_piece(piece, new_position)
         logger.info(self.print_board())
@@ -112,8 +114,8 @@ class Board:
     def to_dict(self):
         board = []
         for i, row in enumerate(self._board):
-            row_dict = {X_INVERTER[str(x)]: "%s %s" % (r.colour, r.name) if isinstance(r, Pieces) else "None" for x, r in enumerate(row)}
-            board.append({"row": i + 1, "data": row_dict})
+            row_dict = {Y_INVERTER[str(x)]: "%s %s" % (r.colour, r.name) if isinstance(r, Pieces) else "None" for x, r in enumerate(row)}
+            board.append({"row": X_INVERTER[str(i)], "data": row_dict})
 
         return board
 

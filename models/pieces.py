@@ -88,9 +88,9 @@ class Pawn(Pieces):
                 logger.info("First move Black")
                 return position[0] - self.position[0] in [1, 2]
             return position[0] - self.position[0] == 1
-        if self.position[0] == 7:
+        if self.position[0] == 6:
             logger.info("First move White")
-            return position[0] - self.position[0] in [1, 2]
+            return self.position[0] - position[0] in [1, 2]
         return self.position[0] - position[0] == 1
 
     def is_kill_valid(self, other_piece):
