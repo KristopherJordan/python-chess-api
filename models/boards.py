@@ -21,10 +21,10 @@ class Board:
             raise Exception("No Piece in Position")  # TODO: Raise 404
 
         if not self.is_in_bounds(new_position):
-            raise Exception("New Position: %s Not In Bounds" % new_position)
+            raise Exception("New Position: %s Not In Bounds" % readable_position(new_position))
 
         piece = self._board[position[0]][position[1]]
-        if piece.colour != player.colour:
+        if piece.get_colour() != player.get_colour():
             raise Exception("Not allowed to move opponents pieces")
 
         if not self._is_move_valid(piece, new_position):
@@ -38,24 +38,22 @@ class Board:
         if existing_piece:
             logger.info("Existing piece: %s  | taken by: %s", existing_piece, piece)
             existing_piece.remove()
-            self._board[piece.position[0]][piece.position[1]] = None
-            self._board[new_position[0]][new_position[1]] = piece
-            piece.position = new_position
         else:
-            logger.info("placing piece %s to %s", piece, new_position)
-            self._board[piece.position[0]][piece.position[1]] = None
-            self._board[new_position[0]][new_position[1]] = piece
-            piece.position = new_position
+            logger.info("placing piece %s to %s", piece, readable_position(new_position))
 
-        logger.info("Moved %s to %s", piece, piece.position)
+        self._board[piece.get_y_pos()][piece.get_x_pos()] = None
+        self._board[new_position[0]][new_position[1]] = piece
+        piece.set_position(new_position)
+
+        logger.info("Moved %s to %s", piece, piece.get_hr_pos())
 
     def _is_move_valid(self, piece, new_position):
         if not piece.is_movement_valid(self._board, new_position):
-            logger.info("Not Legal Movement: %s for piece: %s", new_position, piece)
+            logger.info("Not Legal Movement: %s for piece: %s", readable_position(new_position), piece)
             return False
         existing_piece = self._board[new_position[0]][new_position[1]]
         if existing_piece:
-            logger.info("%s is occupied by %s", new_position, existing_piece)
+            logger.info("%s is occupied by %s", readable_position(new_position), existing_piece)
             if not piece.is_kill_valid(existing_piece):
                 return False
 
@@ -83,10 +81,10 @@ class Board:
 
     def _set_pieces(self, row, colour):
         king = King(colour)
-        self._board[row][king.position[1]] = king
+        self._board[row][king._position[1]] = king
 
         queen = Queen(colour)
-        self._board[row][queen.position[1]] = queen
+        self._board[row][queen._position[1]] = queen
 
         rook = Rook(colour, (row, 0))
         self._board[row][0] = rook
@@ -114,17 +112,17 @@ class Board:
     def to_dict(self):
         board = []
         for i, row in enumerate(self._board):
-            row_dict = {Y_INVERTER[str(x)]: "%s %s" % (r.colour, r.name) if isinstance(r, Pieces) else "None" for x, r in enumerate(row)}
-            board.append({"row": X_INVERTER[str(i)], "data": row_dict})
+            row_dict = {X_INVERTER[str(x)]: "%s %s" % (r.get_colour(), r.get_name()) if isinstance(r, Pieces) else "None" for x, r in enumerate(row)}
+            board.append({"row": Y_INVERTER[str(i)], "data": row_dict})
 
         return board
 
     def print_board(self):
         headers = "\n   |   A  |  B  |  C  |  D  |  E  |  F  |  G  |  H  |\n "
         return_string = """%s""" % headers
-        return_string += '\n'.join(["%s | %s" % (i, row) for i, row in enumerate(self._board)])
+        return_string += '\n'.join(["%s | %s" % (Y_INVERTER[str(i)], row) for i, row in enumerate(self._board)])
         return_string += headers
-        return return_string
+        print(return_string)
 
 
 # {WHITE : {Pawn : "♙", Rook : "♖", Knight : "♘", Bishop : "♗", King : "♔", Queen : "♕" }, BLACK : {Pawn : "♟", Rook : "♜", Knight : "♞", Bishop : "♝", King : "♚", Queen : "♛" }}

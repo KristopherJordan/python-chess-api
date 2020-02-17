@@ -13,9 +13,9 @@ class Game:
         self.player1 = player1
         self.player2 = player2
         self.board = Board()
-        self.moves = []
+        self._moves = []
         self.id = random.randint(1000, 9999)
-        self.next_colour = WHITE
+        self._next_colour = WHITE
 
     def start_game(self):
         return self
@@ -24,20 +24,21 @@ class Game:
         if not self.validate_turn(player):
             raise Exception("Turn Not Valid")
 
+        print(position)
+        print(new_position)
         self.board.move_piece(position, new_position, player)
-        self.moves.append({"player": player.name, "board": self.board})
-        self.next_colour = WHITE if player.colour is BLACK else BLACK
-        return self.board
+        self._moves.append({"player": player.get_name(), "board": self.board})
+        self._next_colour = WHITE if player.get_colour() is BLACK else BLACK
 
     def validate_turn(self, player):
-        if not self.moves:
-            if player.colour != WHITE:
-                logger.info("%s colour cant start the game", player.colour)
+        if not self._moves:
+            if player.get_colour() != WHITE:
+                logger.info("%s colour cant start the game", player.get_colour())
                 return False
             return True
 
-        if player.colour != self.next_colour:
-            logger.info("Not %s's turn", player.name)
+        if player.get_colour() != self._next_colour:
+            logger.info("Not %s's turn", player.get_name())
             return False
 
         return True

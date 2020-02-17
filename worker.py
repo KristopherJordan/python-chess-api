@@ -46,8 +46,8 @@ def start():
             "id": game.id,
             "players":
                 {
-                    "white": player1.name,
-                    "black": player2.name,
+                    "white": player1.get_name(),
+                    "black": player2.get_name(),
                 }
         }
         return jsonify(return_data)

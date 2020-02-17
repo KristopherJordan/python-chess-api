@@ -1,6 +1,8 @@
 import logging
 from abc import ABCMeta
 
+from services.utils import X_INVERTER, Y_INVERTER
+
 logger = logging.getLogger(__name__)
 
 WHITE = "white"
@@ -18,15 +20,15 @@ class Pieces(metaclass=ABCMeta):
             logger.info("Wrong input colour: '%s'", colour)
             raise Exception("Wrong Colour Exception")
 
-        self.colour = colour
-        self.name = ""
-        self.position = position
-        self.abbreviation = None
+        self._colour = colour
+        self._name = ""
+        self._position = position
+        self._abbreviation = None
 
         self.validate()
 
     def __repr__(self):
-        return "%s %s" % (self.colour, self.abbreviation)
+        return "%s %s" % (self._colour, self._abbreviation)
 
     def validate(self):
         logger.info("Not implemented")
@@ -36,23 +38,68 @@ class Pieces(metaclass=ABCMeta):
         logger.info("Not implemented")
 
     def remove(self):
+        """
+        Remove position for Piece
+        """
         logger.info("removing %s", self)
-        self.position = None
+        self._position = None
 
     def is_kill_valid(self, other_piece):
+        """
+        Validate Kill for given piece
+        :param other_piece: Piece object to eliminate
+        :return: boolean
+        """
         pass
+
+    def get_colour(self):
+        """
+        Get piece colour
+        """
+        return self._colour
+
+    def get_name(self):
+        """
+        Get Piece Name
+        """
+        return self._name
+
+    def get_y_pos(self):
+        """
+        Get Piece X Position
+        """
+        return self._position[0]
+
+    def get_x_pos(self):
+        """
+        Get Piece Y Position
+        """
+        return self._position[1]
+
+    def get_hr_pos(self):
+        """
+        Human readable position
+        """
+        return "%s%s" % (X_INVERTER[str(self.get_x_pos())], Y_INVERTER[str(self.get_y_pos())])
+
+    def set_position(self, position):
+        """
+        Set position tuple to piece
+        :param position: tuple, (y,x)
+        """
+        self._position = position
 
 
 class King(Pieces):
 
     def validate(self):
-        self.name = "King"
-        self.abbreviation = "K"
+        self._name = "King"
+        self._abbreviation = "K"
 
-        if self.colour == WHITE:
-            self.position = [7, 4]
+        if self._colour == WHITE:
+            self._position = [7, 4]
         else:
-            self.position = [0, 4]
+            self._position = [0, 4]
 
     def is_movement_valid(self, board, position):
         return
@@ -61,13 +108,13 @@ class King(Pieces):
 class Queen(Pieces):
 
     def validate(self):
-        self.name = "Queen"
-        self.abbreviation = "Q"
+        self._name = "Queen"
+        self._abbreviation = "Q"
 
-        if self.colour == WHITE:
-            self.position = [7, 3]
+        if self._colour == WHITE:
+            self._position = [7, 3]
         else:
-            self.position = [0, 3]
+            self._position = [0, 3]
 
     def is_movement_valid(self, board, position):
         return
@@ -76,28 +123,28 @@ class Queen(Pieces):
 class Pawn(Pieces):
 
     def validate(self):
-        self.name = "Pawn"
-        self.abbreviation = "P"
+        self._name = "Pawn"
+        self._abbreviation = "P"
 
     def is_movement_valid(self, board, position):
-        if position[1] - self.position[1] not in [-1, 0, 1]:
-            logger.info("Cant move diagonally with %s", self.name)
+        if position[1] - self._position[1] not in [-1, 0, 1]:
+            logger.info("Cant move diagonally with %s", self._name)
             return False
-        if self.colour == BLACK:
-            if self.position[0] == 1:
+        if self._colour == BLACK:
+            if self._position[0] == 1:
                 logger.info("First move Black")
-                return position[0] - self.position[0] in [1, 2]
-            return position[0] - self.position[0] == 1
-        if self.position[0] == 6:
+                return position[0] - self._position[0] in [1, 2]
+            return position[0] - self._position[0] == 1
+        if self._position[0] == 6:
             logger.info("First move White")
-            return self.position[0] - position[0] in [1, 2]
-        return self.position[0] - position[0] == 1
+            return self._position[0] - position[0] in [1, 2]
+        return self._position[0] - position[0] == 1
 
     def is_kill_valid(self, other_piece):
-        if self.colour == other_piece.colour:
-            logger.info("Both pieces are %s" % self.colour)
+        if self.get_colour() == other_piece.get_colour():
+            logger.info("Both pieces are %s" % self.get_colour())
             return False
-        if self.position[1] - other_piece.position[1] not in [1, -1]:
+        if self.get_x_pos() - other_piece.get_x_pos() not in [1, -1]:
             logger.info("%s can only kill diagonally", self)
             return False
         return True
@@ -106,8 +153,8 @@ class Pawn(Pieces):
 class Bishop(Pieces):
 
     def validate(self):
-        self.name = "Bishop"
-        self.abbreviation = "B"
+        self._name = "Bishop"
+        self._abbreviation = "B"
 
     def is_movement_valid(self, board, position):
         return
@@ -116,8 +163,8 @@ class Bishop(Pieces):
 class Knight(Pieces):
 
     def validate(self):
-        self.name = "Knight"
-        self.abbreviation = "KN"
+        self._name = "Knight"
+        self._abbreviation = "KN"
 
     def is_movement_valid(self, board, position):
         # TODO: hmm
@@ -127,9 +174,11 @@ class Knight(Pieces):
 class Rook(Pieces):
 
     def validate(self):
-        self.name = "Rook"
-        self.abbreviation = "R"
+        self._name = "Rook"
+        self._abbreviation = "R"
 
     def is_movement_valid(self, board, position):
-        return
+        if self._position[0] == position[0] or self._position[1] == position[1]:
+            return True
+        return False
 
