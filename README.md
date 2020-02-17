@@ -5,6 +5,8 @@ Work in Progress
 ## How to run:
 1. Create a python virtual environment.
 Example with `pyenv`:
+- `brew install pyenv` ([pyenv Documentation](https://github.com/pyenv/pyenv))
+- `brew install pyenv-virtualenv` ([pyenv-virtualenv Documentation](https://github.com/pyenv/pyenv-virtualenv))
 - `pyenv virtualenv 3.7.3 chess`
 - `pyenv activate chess`
 - `make install`  to install the requirements
