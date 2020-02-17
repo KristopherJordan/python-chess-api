@@ -33,7 +33,7 @@ class Pieces(metaclass=ABCMeta):
     def validate(self):
         logger.info("Not implemented")
 
-    def is_movement_valid(self, board, position):
+    def is_movement_valid(self, board, new_position):
         """ [(Y, X)]"""
         logger.info("Not implemented")
 
@@ -66,19 +66,19 @@ class Pieces(metaclass=ABCMeta):
 
     def get_y_pos(self):
         """
-        Get Piece X Position
+        Get Piece Y Position
         """
         return self._position[0]
 
     def get_x_pos(self):
         """
-        Get Piece Y Position
+        Get Piece X Position
         """
         return self._position[1]
 
     def get_hr_pos(self):
         """
-        Human readable position
+        Human Readable Position. Ex: 'e2'
         """
         return "%s%s" % (X_INVERTER[str(self.get_x_pos())], Y_INVERTER[str(self.get_y_pos())])
 
@@ -101,7 +101,7 @@ class King(Pieces):
         else:
             self._position = [0, 4]
 
-    def is_movement_valid(self, board, position):
+    def is_movement_valid(self, board, new_position):
         return
 
 
@@ -116,7 +116,7 @@ class Queen(Pieces):
         else:
             self._position = [0, 3]
 
-    def is_movement_valid(self, board, position):
+    def is_movement_valid(self, board, new_position):
         return
 
 
@@ -126,19 +126,19 @@ class Pawn(Pieces):
         self._name = "Pawn"
         self._abbreviation = "P"
 
-    def is_movement_valid(self, board, position):
-        if position[1] - self._position[1] not in [-1, 0, 1]:
+    def is_movement_valid(self, board, new_position):
+        if new_position[1] - self._position[1] not in [-1, 0, 1]:
             logger.info("Cant move diagonally with %s", self._name)
             return False
         if self._colour == BLACK:
             if self._position[0] == 1:
                 logger.info("First move Black")
-                return position[0] - self._position[0] in [1, 2]
-            return position[0] - self._position[0] == 1
+                return new_position[0] - self._position[0] in [1, 2]
+            return new_position[0] - self._position[0] == 1
         if self._position[0] == 6:
             logger.info("First move White")
-            return self._position[0] - position[0] in [1, 2]
-        return self._position[0] - position[0] == 1
+            return self._position[0] - new_position[0] in [1, 2]
+        return self._position[0] - new_position[0] == 1
 
     def is_kill_valid(self, other_piece):
         if self.get_colour() == other_piece.get_colour():
@@ -156,7 +156,7 @@ class Bishop(Pieces):
         self._name = "Bishop"
         self._abbreviation = "B"
 
-    def is_movement_valid(self, board, position):
+    def is_movement_valid(self, board, new_position):
         return
 
 
@@ -166,7 +166,7 @@ class Knight(Pieces):
         self._name = "Knight"
         self._abbreviation = "KN"
 
-    def is_movement_valid(self, board, position):
+    def is_movement_valid(self, board, new_position):
         # TODO: hmm
         return
 
@@ -177,8 +177,26 @@ class Rook(Pieces):
         self._name = "Rook"
         self._abbreviation = "R"
 
-    def is_movement_valid(self, board, position):
-        if self._position[0] == position[0] or self._position[1] == position[1]:
-            return True
-        return False
+    def is_movement_valid(self, board, new_position):
+        if not (self.get_y_pos() == new_position[0] or self.get_x_pos() == new_position[1]):
+            return False
 
+        if self.get_y_pos() == new_position[0]:
+            # Move piece horisontally | Check if pieces in the way
+            min_pos = min(self.get_x_pos(), new_position[1])
+            max_pos = max(self.get_x_pos(), new_position[1])
+            for pos in range(min_pos, max_pos):
+                if board[new_position[0]][pos]:
+                    logger.warning("%s cant move over existing piece", self._abbreviation)
+                    return False
+
+        else:
+            # Move piece vertically | Check if pieces in the way
+            min_pos = min(self.get_y_pos(), new_position[0])
+            max_pos = max(self.get_y_pos(), new_position[0])
+            for pos in range(min_pos, max_pos):
+                if board[pos][new_position[1]]:
+                    logger.warning("%s cant move over existing piece", self._abbreviation)
+                    return False
+
+        return True

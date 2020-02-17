@@ -19,7 +19,6 @@ app = Flask(__name__)
 
 @app.route("/")
 def hello():
-    # results = start_game()
     return render_template("results.html")
 
 
@@ -41,6 +40,7 @@ def start():
         game = start_game(player1, player2)
 
         GAMES[str(game.id)] = game
+
         return_data = {
             "game": game.board.to_dict(),
             "id": game.id,

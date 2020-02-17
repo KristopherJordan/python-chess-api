@@ -33,3 +33,6 @@ Example:
 	"new_position": "e4"
 }
 ```
+
+## Run tests
+`make test`

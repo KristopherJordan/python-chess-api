@@ -1,8 +1,8 @@
 from unittest.case import TestCase
 
-from services.play import do_move, start_game
-from models.players import Player
 from models.games import Game
+from models.players import Player
+from services.play import start_game, do_move
 
 
 class TestGameServices(TestCase):
@@ -59,3 +59,8 @@ class TestGameServices(TestCase):
         game = start_game(self.player1, self.player2)
         with self.assertRaises(Exception):
             do_move(self.player1, game, "e2", "e5")
+
+    def test_move_rook_through_piece(self):
+        game = start_game(self.player1, self.player2)
+        with self.assertRaises(Exception):
+            do_move(self.player1, game, "a1", "a4")
