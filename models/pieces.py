@@ -196,6 +196,12 @@ class Bishop(Pieces):
 
         return True
 
+    def is_kill_valid(self, other_piece):
+        if self.get_colour() == other_piece.get_colour():
+            logger.info("Both pieces are %s" % self.get_colour())
+            return False
+        return True
+
 
 class Knight(Pieces):
 
@@ -226,6 +232,8 @@ class Rook(Pieces):
             min_pos = min(self.get_x_pos(), new_position[1])
             max_pos = max(self.get_x_pos(), new_position[1])
             for pos in range(min_pos, max_pos):
+                if (new_position[0], pos) == new_position:
+                    return True
                 if board[new_position[0]][pos]:
                     # TODO: Check if piece at end is opposing team
                     logger.warning("%s cant move over existing piece", self._abbreviation)
@@ -236,8 +244,17 @@ class Rook(Pieces):
             min_pos = min(self.get_y_pos(), new_position[0])
             max_pos = max(self.get_y_pos(), new_position[0])
             for pos in range(min_pos, max_pos):
+                if (new_position[0], pos) == new_position:
+                    return True
                 if board[pos][new_position[1]]:
                     logger.warning("%s cant move over existing piece", self._abbreviation)
                     return False
 
         return True
+
+    def is_kill_valid(self, other_piece):
+        if self.get_colour() == other_piece.get_colour():
+            logger.info("Both pieces are %s" % self.get_colour())
+            return False
+        return True
+
