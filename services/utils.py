@@ -57,4 +57,4 @@ def convert_position(position):
 def readable_position(position):
     x = X_INVERTER[str(position[1])]
     y = Y_INVERTER[str(position[0])]
-    return "%s%s" % (y, x)
+    return "%s%s" % (x, y)

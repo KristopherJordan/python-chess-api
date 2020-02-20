@@ -8,9 +8,6 @@ logger = logging.getLogger(__name__)
 WHITE = "white"
 BLACK = "black"
 
-cardinals = [(1, 0), (0, 1), (-1, 0), (0, -1)]
-diagonals = [(1, 1), (-1, 1), (1, -1), (-1, -1)]
-
 
 class Pieces(metaclass=ABCMeta):
 
@@ -152,12 +149,52 @@ class Pawn(Pieces):
 
 class Bishop(Pieces):
 
+    _move_patterns = {
+        "up_left": [1, -1],
+        "up_right": [1, 1],
+        "down_left": [-1, -1],
+        "down_right": [-1, 1],
+    }
+
     def validate(self):
         self._name = "Bishop"
         self._abbreviation = "B"
 
     def is_movement_valid(self, board, new_position):
-        return
+        if self._position == new_position:
+            return False
+        # Find length between the coordinates
+        x_vec = self.get_x_pos() - new_position[1]
+        y_vec = self.get_y_pos() - new_position[0]
+        # x1 - x2 and y1 - y2 should be the same if the piece moves diagonally
+        if abs(x_vec) != abs(y_vec):
+            logger.warning("Bishop can only move diagonally")
+            return False
+
+        if new_position[1] > self.get_x_pos():
+            if new_position[0] > self.get_y_pos():
+                move = self._move_patterns["up_right"]
+            else:
+                move = self._move_patterns["down_right"]
+        else:
+            if new_position[0] > self.get_y_pos():
+                move = self._move_patterns["up_left"]
+            else:
+                move = self._move_patterns["down_left"]
+
+        new_y = self._position[0]
+        new_x = self._position[1]
+        for pos in range(x_vec):
+            # Move diagonally for each iteration in the range of the total x-axis movement
+            new_y = move[0] + new_y
+            new_x = move[1] + new_x
+            if (new_y, new_x) == new_position:
+                return True
+            if board[new_y][new_x]:
+                logger.warning("%s cant move over existing piece", self._abbreviation)
+                return False
+
+        return True
 
 
 class Knight(Pieces):
@@ -178,6 +215,9 @@ class Rook(Pieces):
         self._abbreviation = "R"
 
     def is_movement_valid(self, board, new_position):
+        if self._position == new_position:
+            return False
+
         if not (self.get_y_pos() == new_position[0] or self.get_x_pos() == new_position[1]):
             return False
 
@@ -187,6 +227,7 @@ class Rook(Pieces):
             max_pos = max(self.get_x_pos(), new_position[1])
             for pos in range(min_pos, max_pos):
                 if board[new_position[0]][pos]:
+                    # TODO: Check if piece at end is opposing team
                     logger.warning("%s cant move over existing piece", self._abbreviation)
                     return False
 

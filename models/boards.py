@@ -81,32 +81,32 @@ class Board:
 
     def _set_pieces(self, row, colour):
         king = King(colour)
-        self._board[row][king._position[1]] = king
+        self._board[row][king.get_x_pos()] = king
 
         queen = Queen(colour)
-        self._board[row][queen._position[1]] = queen
+        self._board[row][queen.get_x_pos()] = queen
 
-        rook = Rook(colour, (row, 0))
+        rook = Rook(colour, [row, 0])
         self._board[row][0] = rook
 
-        rook = Rook(colour, (row, 7))
+        rook = Rook(colour, [row, 7])
         self._board[row][7] = rook
 
-        knight = Knight(colour, (row, 1))
+        knight = Knight(colour, [row, 1])
         self._board[row][1] = knight
 
-        knight = Knight(colour, (row, 6))
+        knight = Knight(colour, [row, 6])
         self._board[row][6] = knight
 
-        bishop = Bishop(colour, (row, 2))
+        bishop = Bishop(colour, [row, 2])
         self._board[row][2] = bishop
 
-        bishop = Bishop(colour, (row, 5))
+        bishop = Bishop(colour, [row, 5])
         self._board[row][5] = bishop
 
     def _set_pawns(self, row, colour):
         for i in range(8):
-            pawn = Pawn(colour, (row, i))
+            pawn = Pawn(colour, [row, i])
             self._board[row][i] = pawn
 
     def to_dict(self):
