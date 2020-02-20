@@ -11,7 +11,7 @@ class Board:
     def __init__(self):
         self._board = []
         self._create_empty_board()
-        self.print_board()
+        # self.print_board()
 
     def move_piece(self, position, new_position, player):
         if not (isinstance(position, tuple) or isinstance(new_position, tuple)):
@@ -31,7 +31,7 @@ class Board:
             raise Exception("Move %s to %s is not valid" % (piece, readable_position(new_position)))
 
         self._place_piece(piece, new_position)
-        logger.info(self.print_board())
+        # logger.info(self.print_board())
 
     def _place_piece(self, piece, new_position):
         existing_piece = self._board[new_position[0]][new_position[1]]
@@ -110,10 +110,10 @@ class Board:
             self._board[row][i] = pawn
 
     def to_dict(self):
-        board = []
+        board = {}
         for i, row in enumerate(self._board):
             row_dict = {X_INVERTER[str(x)]: "%s %s" % (r.get_colour(), r.get_name()) if isinstance(r, Pieces) else "None" for x, r in enumerate(row)}
-            board.append({"row": Y_INVERTER[str(i)], "data": row_dict})
+            board[Y_INVERTER[str(i)]] = row_dict
 
         return board
 

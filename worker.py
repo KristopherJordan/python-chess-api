@@ -25,7 +25,7 @@ def hello():
 @app.route("/start", methods=["POST"])
 def start():
     data = request.json
-    logger.info("Starting new game: %s", data)
+    logger.info("Starting new game | Data: %s", data)
     try:
         # Create players
         player1_name = data['player1']['name'].lower()
@@ -50,6 +50,7 @@ def start():
                     "black": player2.get_name(),
                 }
         }
+        logger.info("New game started | White: '%s' | Black: '%s' | ID: %s", player1.get_name(), player2.get_name(), game.id)
         return jsonify(return_data)
     except Exception as ex:
         logger.error("Exception: %s", ex)
