@@ -2,7 +2,7 @@ import logging
 import random
 
 from models.boards import Board
-from models.pieces import WHITE, BLACK
+from services.utils import WHITE, BLACK
 
 logger = logging.getLogger(__name__)
 
@@ -19,6 +19,9 @@ class Game:
 
     def start_game(self):
         return self
+
+    def get_next_move(self):
+        return self._next_colour
 
     def do_move(self, player, position, new_position):
         if not self.validate_turn(player):

@@ -1,12 +1,9 @@
 import logging
 from abc import ABCMeta
 
-from services.utils import X_INVERTER, Y_INVERTER
+from services.utils import X_INVERTER, Y_INVERTER, WHITE, BLACK
 
 logger = logging.getLogger(__name__)
-
-WHITE = "white"
-BLACK = "black"
 
 
 class Pieces(metaclass=ABCMeta):

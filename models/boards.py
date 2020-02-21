@@ -1,7 +1,7 @@
 import logging
 
-from models.pieces import King, Queen, Pawn, Bishop, Rook, Knight, WHITE, BLACK, Pieces
-from services.utils import Y_INVERTER, X_INVERTER, readable_position
+from models.pieces import King, Queen, Pawn, Bishop, Rook, Knight, Pieces
+from services.utils import Y_INVERTER, X_INVERTER, readable_position, BLACK, WHITE
 
 logger = logging.getLogger(__name__)
 

@@ -45,6 +45,11 @@ Y_INVERTER = {
 }
 
 
+# Piece colours
+WHITE = "white"
+BLACK = "black"
+
+
 def convert_position(position):
     if len(position) != 2:
         raise Exception("Position in wrong format. Example 'e4'. Not: %s" % position)

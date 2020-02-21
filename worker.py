@@ -1,10 +1,10 @@
 import logging
 
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, jsonify, request
 
 from models.players import Player
-from models.pieces import WHITE, BLACK
-from services.play import start_game, do_move
+from services.play import do_move, start_game
+from services.utils import WHITE, BLACK
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -42,15 +42,16 @@ def start():
         GAMES[str(game.id)] = game
 
         return_data = {
-            "game": game.board.to_dict(),
+            "board": game.board.to_dict(),
             "id": game.id,
             "players":
                 {
                     "white": player1.get_name(),
                     "black": player2.get_name(),
-                }
+                },
+            "next_move": game.get_next_move(),
         }
-        logger.info("New game started | White: '%s' | Black: '%s' | ID: %s", player1.get_name(), player2.get_name(), game.id)
+        logger.info(f"New game started | White: '{player1.get_name()}' | Black: '{player2.get_name()}' | ID: {game.id}")
         return jsonify(return_data)
     except Exception as ex:
         logger.error("Exception: %s", ex)
@@ -60,29 +61,61 @@ def start():
 @app.route("/move/<path:game_id>", methods=["PUT"])
 def move_piece(game_id):
     data = request.json
-    logger.info("Starting to move piece: %s | game ID: %s", data, game_id)
+    logger.info(f"Starting to move piece: {data} | game ID: {game_id}")
     try:
         name = data['player'].lower()
         position = data['position']
         new_position = data['new_position']
         if name not in PLAYERS:
-            raise Exception("%s is not a player with a running game" % name)
+            raise Exception(f"{name} is not a player with a running game")
 
         player = PLAYERS[name]
 
         if game_id not in GAMES:
-            raise Exception("Game ID not valid")
+            logger.error(f"Game ID '{game_id}' does not exist")
+            return resource_not_found(f"Game ID '{game_id}' does not exist")
 
         game = GAMES[game_id]
 
         game = do_move(player, game, position, new_position)
 
-        return_data = {"game": game.board.to_dict(), "id": game.id}
-        logger.info("Finished moving piece: %s", return_data)
+        return_data = {
+            "board": game.board.to_dict(),
+            "id": game.id,
+            "next_move": game.get_next_move(),
+        }
+        logger.info(f"Finished moving piece: {return_data}")
         return jsonify(return_data)
     except Exception as ex:
         logger.error("Exception: %s", ex)
         return jsonify("Error: %s" % ex)  # TODO: Raise HTTP error
+
+
+@app.route("/game/<path:game_id>", methods=["GET"])
+def get_game_info(game_id):
+    logger.info(f"getting game info | ID: {game_id}")
+    try:
+        if game_id not in GAMES:
+            logger.error(f"Game ID '{game_id}' does not exist")
+            return resource_not_found(f"Game ID '{game_id}' does not exist")
+
+        game = GAMES[game_id]
+        return_data = {
+            "board": game.board.to_dict(),
+            "id": game.id,
+            "next_move": game.get_next_move(),
+        }
+        logger.info(f"Finished getting game data: {return_data}")
+        return jsonify(return_data)
+
+    except Exception as ex:
+        logger.error("Exception: %s", ex)
+        return jsonify("Error: %s" % ex)  # TODO: Raise HTTP error
+
+
+@app.errorhandler(404)
+def resource_not_found(e):
+    return jsonify(error=str(e)), 404
 
 
 if __name__ == "__main__":
