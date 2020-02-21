@@ -22,7 +22,7 @@ def hello():
     return render_template("results.html")
 
 
-@app.route("/start", methods=["POST"])
+@app.route("/game", methods=["POST"])
 def start():
     data = request.json
     logger.info("Starting new game | Data: %s", data)
@@ -58,7 +58,7 @@ def start():
         return jsonify("Error %s" % ex)  # TODO: Raise HTTP error
 
 
-@app.route("/move/<path:game_id>", methods=["PUT"])
+@app.route("/game/<path:game_id>", methods=["PUT"])
 def move_piece(game_id):
     data = request.json
     logger.info(f"Starting to move piece: {data} | game ID: {game_id}")
