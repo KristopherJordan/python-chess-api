@@ -5,6 +5,13 @@ from services.utils import X_INVERTER, Y_INVERTER, WHITE, BLACK
 
 logger = logging.getLogger(__name__)
 
+move_patterns = {
+    "up_left": [1, -1],
+    "up_right": [1, 1],
+    "down_left": [-1, -1],
+    "down_right": [-1, 1],
+}
+
 
 class Pieces(metaclass=ABCMeta):
 
@@ -35,7 +42,7 @@ class Pieces(metaclass=ABCMeta):
         """
         Remove position for Piece
         """
-        logger.info("removing %s", self)
+        logger.info(f"removing {self}")
         self._position = None
 
     def is_kill_valid(self, other_piece):
@@ -44,7 +51,10 @@ class Pieces(metaclass=ABCMeta):
         :param other_piece: Piece object to eliminate
         :return: boolean
         """
-        pass
+        if self.get_colour() == other_piece.get_colour():
+            logger.info(f"Both pieces are {self.get_colour()}")
+            return False
+        return True
 
     def get_colour(self):
         """
@@ -111,7 +121,12 @@ class Queen(Pieces):
             self._position = [0, 3]
 
     def is_movement_valid(self, board, new_position):
-        return
+        """
+        Check first if movement is vertical/ horisontal. Then check diagonal movement
+        """
+        if self.get_y_pos() == new_position[0] or self.get_x_pos() == new_position[1]:
+            return is_ver_hor_movement_valid(self, new_position, board)
+        return is_diagonal_move_valid(self, new_position, board)
 
 
 class Pawn(Pieces):
@@ -122,7 +137,7 @@ class Pawn(Pieces):
 
     def is_movement_valid(self, board, new_position):
         if new_position[1] - self._position[1] not in [-1, 0, 1]:
-            logger.info("Cant move diagonally with %s", self._name)
+            logger.info(f"Cant move diagonally with {self}")
             return False
         if self._colour == BLACK:
             if self._position[0] == 1:
@@ -136,68 +151,22 @@ class Pawn(Pieces):
 
     def is_kill_valid(self, other_piece):
         if self.get_colour() == other_piece.get_colour():
-            logger.info("Both pieces are %s" % self.get_colour())
+            logger.info(f"Both pieces are {self.get_colour()}")
             return False
         if self.get_x_pos() - other_piece.get_x_pos() not in [1, -1]:
-            logger.info("%s can only kill diagonally", self)
+            logger.info(f"{self} can only kill diagonally")
             return False
         return True
 
 
 class Bishop(Pieces):
 
-    _move_patterns = {
-        "up_left": [1, -1],
-        "up_right": [1, 1],
-        "down_left": [-1, -1],
-        "down_right": [-1, 1],
-    }
-
     def validate(self):
         self._name = "Bishop"
         self._abbreviation = "B"
 
     def is_movement_valid(self, board, new_position):
-        if self._position == new_position:
-            return False
-        # Find length between the coordinates
-        x_vec = self.get_x_pos() - new_position[1]
-        y_vec = self.get_y_pos() - new_position[0]
-        # x1 - x2 and y1 - y2 should be the same if the piece moves diagonally
-        if abs(x_vec) != abs(y_vec):
-            logger.warning("Bishop can only move diagonally")
-            return False
-
-        if new_position[1] > self.get_x_pos():
-            if new_position[0] > self.get_y_pos():
-                move = self._move_patterns["up_right"]
-            else:
-                move = self._move_patterns["down_right"]
-        else:
-            if new_position[0] > self.get_y_pos():
-                move = self._move_patterns["up_left"]
-            else:
-                move = self._move_patterns["down_left"]
-
-        new_y = self._position[0]
-        new_x = self._position[1]
-        for pos in range(x_vec):
-            # Move diagonally for each iteration in the range of the total x-axis movement
-            new_y = move[0] + new_y
-            new_x = move[1] + new_x
-            if (new_y, new_x) == new_position:
-                return True
-            if board[new_y][new_x]:
-                logger.warning("%s cant move over existing piece", self._abbreviation)
-                return False
-
-        return True
-
-    def is_kill_valid(self, other_piece):
-        if self.get_colour() == other_piece.get_colour():
-            logger.info("Both pieces are %s" % self.get_colour())
-            return False
-        return True
+        return is_diagonal_move_valid(self, new_position, board)
 
 
 class Knight(Pieces):
@@ -218,40 +187,91 @@ class Rook(Pieces):
         self._abbreviation = "R"
 
     def is_movement_valid(self, board, new_position):
-        if self._position == new_position:
-            return False
+        return is_ver_hor_movement_valid(self, new_position, board)
 
-        if not (self.get_y_pos() == new_position[0] or self.get_x_pos() == new_position[1]):
-            return False
 
-        if self.get_y_pos() == new_position[0]:
-            # Move piece horisontally | Check if pieces in the way
-            min_pos = min(self.get_x_pos(), new_position[1])
-            max_pos = max(self.get_x_pos(), new_position[1])
-            for pos in range(min_pos, max_pos):
-                if (new_position[0], pos) == new_position:
-                    return True
-                if board[new_position[0]][pos]:
-                    # TODO: Check if piece at end is opposing team
-                    logger.warning("%s cant move over existing piece", self._abbreviation)
-                    return False
+def is_diagonal_move_valid(piece, new_position, board):
+    """
+    Check if diagonal movement is valid
 
+    :param piece: Piece object
+    :param new_position: End Position
+    :param board: Board object
+    :return: Boolean
+    """
+    logger.info("Checking if diagonal movement is valid")
+    if piece._position == new_position:
+        return False
+    # Find length between the coordinates
+    x_vec = piece.get_x_pos() - new_position[1]
+    y_vec = piece.get_y_pos() - new_position[0]
+    # x1 - x2 and y1 - y2 should be the same if the piece moves diagonally
+    if abs(x_vec) != abs(y_vec):
+        logger.warning("Bishop can only move diagonally")
+        return False
+
+    if new_position[1] > piece.get_x_pos():
+        if new_position[0] > piece.get_y_pos():
+            move = move_patterns["up_right"]
         else:
-            # Move piece vertically | Check if pieces in the way
-            min_pos = min(self.get_y_pos(), new_position[0])
-            max_pos = max(self.get_y_pos(), new_position[0])
-            for pos in range(min_pos, max_pos):
-                if (new_position[0], pos) == new_position:
-                    return True
-                if board[pos][new_position[1]]:
-                    logger.warning("%s cant move over existing piece", self._abbreviation)
-                    return False
+            move = move_patterns["down_right"]
+    else:
+        if new_position[0] > piece.get_y_pos():
+            move = move_patterns["up_left"]
+        else:
+            move = move_patterns["down_left"]
 
-        return True
-
-    def is_kill_valid(self, other_piece):
-        if self.get_colour() == other_piece.get_colour():
-            logger.info("Both pieces are %s" % self.get_colour())
+    new_y = piece.get_y_pos()
+    new_x = piece.get_x_pos()
+    for pos in range(x_vec):
+        # Move diagonally for each iteration in the range of the total x-axis movement
+        new_y = move[0] + new_y
+        new_x = move[1] + new_x
+        if (new_y, new_x) == new_position:
+            return True
+        if board[new_y][new_x]:
+            logger.warning(f"{piece} cant move over existing piece")
             return False
-        return True
 
+    return True
+
+
+def is_ver_hor_movement_valid(piece, new_position, board):
+    """
+    Check if vertical or horisontal movement is valid
+
+    :param piece: Piece object
+    :param new_position: End Position
+    :param board: Board object
+    :return: Boolean
+    """
+    logger.info("Checking if vertical or horisontal movement is valid")
+    if piece._position == new_position:
+        return False
+
+    if not (piece.get_y_pos() == new_position[0] or piece.get_x_pos() == new_position[1]):
+        return False
+
+    if piece.get_y_pos() == new_position[0]:
+        # Move piece horisontally | Check if pieces in the way
+        min_pos = min(piece.get_x_pos(), new_position[1])
+        max_pos = max(piece.get_x_pos(), new_position[1])
+        for pos in range(min_pos, max_pos):
+            if (new_position[0], pos) == new_position:
+                return True
+            if board[new_position[0]][pos]:
+                logger.warning(f"{piece} cant move over existing piece")
+                return False
+
+    else:
+        # Move piece vertically | Check if pieces in the way
+        min_pos = min(piece.get_y_pos(), new_position[0])
+        max_pos = max(piece.get_y_pos(), new_position[0])
+        for pos in range(min_pos, max_pos):
+            if (new_position[0], pos) == new_position:
+                return True
+            if board[pos][new_position[1]]:
+                logger.warning(f"{piece} cant move over existing piece")
+                return False
+
+    return True

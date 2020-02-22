@@ -1,4 +1,5 @@
 import logging
+import os
 
 from flask import Flask, render_template, jsonify, request
 
@@ -120,4 +121,4 @@ def resource_not_found(e):
 
 if __name__ == "__main__":
     logger.info("Starting Flask App")
-    app.run(debug=True, host='0.0.0.0')
+    app.run(debug=True, host='0.0.0.0', port=os.environ.get("HTTP_PORT", "5000"))

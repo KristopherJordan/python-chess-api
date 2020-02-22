@@ -8,3 +8,5 @@ services:
     volumes:
       - .:/app
     command: "python ./worker.py"
+    environment:
+      - HTTP_PORT=5000
