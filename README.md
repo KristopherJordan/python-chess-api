@@ -2,7 +2,7 @@
 
 Work in Progress
 
-## How to run:
+## How to run locally:
 1. Create a python virtual environment.
 Example with `pyenv`:
 - `brew install pyenv` ([pyenv Documentation](https://github.com/pyenv/pyenv))
@@ -10,8 +10,18 @@ Example with `pyenv`:
 - `pyenv virtualenv 3.7.3 chess`
 - `pyenv activate chess`
 - `make install`  to install the requirements
-2. Start app with command `make start`
-3. Open Postman, or other similar tools, and call http://127.0.0.1:5000/start with JSON data in following format:
+2. Start app with command `make start-worker`
+
+## How to run in Docker:
+1. Build docker image:
+- `make build`
+2. Start app:
+- `make start`
+3. Inspect logs:
+- `make logs`
+
+## Test app
+Open Postman, or other similar tools, and call http://127.0.0.1:5000/start with JSON data in following format:
 ```json
 {
 	"player1": {"name": "Namey"},
