@@ -114,8 +114,7 @@ class Pieces(metaclass=ABCMeta):
         for row in empty_board.copy():
             for column in row:
                 if self.is_movement_valid(board, (row, column)):
-
-
+                    pass
 
 
 
