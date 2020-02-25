@@ -1,9 +1,18 @@
 import logging
 
-from models.pieces import King, Queen, Pawn, Bishop, Rook, Knight, Pieces
+from models.pieces import King, Queen, Pawn, Bishop, Rook, Knight, Pieces, POS_PIECES
 from services.utils import Y_INVERTER, X_INVERTER, readable_position, BLACK, WHITE
 
 logger = logging.getLogger(__name__)
+
+
+def create_empty_board():
+    board = []
+    for i in range(8):
+        column = [None] * 8
+        board.append(column)
+
+    return board
 
 
 class Board:
@@ -31,7 +40,7 @@ class Board:
             raise Exception("Move %s to %s is not valid" % (piece, readable_position(new_position)))
 
         self._place_piece(piece, new_position)
-        # logger.info(self.print_board())
+        POS_PIECES[piece.get_colour()].update({piece.get_position(): piece})
 
     def _place_piece(self, piece, new_position):
         existing_piece = self._board[new_position[0]][new_position[1]]
@@ -60,6 +69,15 @@ class Board:
         logger.info("valid move")
         return True
 
+    def get_move_options(self, colour):
+        board_options = create_empty_board()
+        for row in self._board:
+            for existing_piece in row:
+                if not existing_piece or existing_piece.get_colour() != colour:
+                    continue
+                move_options = existing_piece.get_move_options()
+
+
     @staticmethod
     def is_in_bounds(position):
         if 0 <= position[0] <= 7 and 0 <= position[1] <= 7:
@@ -67,9 +85,8 @@ class Board:
         return False
 
     def _create_empty_board(self):
-        for i in range(8):
-            column = [None] * 8
-            self._board.append(column)
+        self._board = create_empty_board()
+        for i in self._board:
             if i == 0:
                 self._set_pieces(i, BLACK)
             elif i == 1:
