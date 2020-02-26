@@ -10,16 +10,17 @@
             .chess-board td { border: 0px solid; width: 4em; height: 4em; }
             .chess-board .light { background: #A3A3A3; }
             .chess-board .dark { background: #888888; }
+
             #sidebar {
             margin-left: 20px;
             min-width: 200px;
-            height: 100%; /* Full-height: remove this if you want "auto" height */
-            width: 160px; /* Set the width of the sidebar */
-            position: fixed; /* Fixed Sidebar (stay in place on scroll) */
-            z-index: 1; /* Stay on top */
-            top: 0; /* Stay at the top */
+            height: 100%;
+            width: 160px;
+            position: fixed;
+            z-index: 1;
+            top: 0;
             left: 0;
-            overflow-x: hidden; /* Disable horizontal scroll */
+            overflow-x: hidden;
             overflow-y: hidden;
             padding-top: 20px;
             }
@@ -29,7 +30,7 @@
             }
 
             .main {
-            margin-left: 250px; /* Same as the width of the sidebar */
+            margin-left: 250px;
             padding: 0px 10px;
             }
         </style>
@@ -215,72 +216,70 @@
             </div>
         </div>
         <script>
-            var btnstart = document.getElementById("btnstart")
+            var btnstart = document.getElementById("btnstart");
             btnstart.addEventListener('click', function(event){
-                player1 = document.getElementById('p1').value
-                player2 = document.getElementById('p2').value
+                player1 = document.getElementById('p1').value;
+                player2 = document.getElementById('p2').value;
                 var theRequest = new XMLHttpRequest();
                 theRequest.open('POST','http://localhost:5000/game');
                 theRequest.setRequestHeader("Content-Type", "application/json");
                 theRequest.onload = function(){
                     var resData= JSON.parse(theRequest.responseText);
                     sessionStorage.setItem("game",resData.id);
-                    sessionStorage.setItem("player1",resData.players.white)
-                    sessionStorage.setItem("player2",resData.players.black)
-                }
+                    sessionStorage.setItem("player1",resData.players.white);
+                    sessionStorage.setItem("player2",resData.players.black);
+                };
                 theRequest.send(JSON.stringify({ "player1": {"name": player1 }, "player2": {"name": player2 }}));
                 
-            })
+            });
 
-            var btnplay = document.getElementById("btnplay")
+            var btnplay = document.getElementById("btnplay");
             btnplay.addEventListener('click', function(event){
-                playername = document.getElementById('whoplay').value
-                initpos = document.getElementById('initpos').value
-                endtpos = document.getElementById('endpos').value
-                var lastgame = sessionStorage.getItem("game")
-                var url = "http://localhost:5000/game/"+lastgame
+                playername = document.getElementById('whoplay').value;
+                initpos = document.getElementById('initpos').value;
+                endtpos = document.getElementById('endpos').value;
+                var lastgame = sessionStorage.getItem("game");
+                var url = "http://localhost:5000/game/"+lastgame;
                 var theRequest = new XMLHttpRequest();
                 theRequest.open('PUT', url);
                 theRequest.setRequestHeader("Content-Type", "application/json");
                 theRequest.onload = function(){
                     var resData= JSON.parse(theRequest.responseText);
                     resData.prop = 'exist';
-
-                    console.log(resData)
                     if(resData.hasOwnProperty('prop')){
                         if(resData['prop']){
                         }
                     }else{
-                        alert(resData)
+                        alert(resData);
                     }
                 }
                 theRequest.send(JSON.stringify({ "player": playername, "position": initpos, "new_position": endtpos}));
                 
-            })
+            });
 
-            var btnreset = document.getElementById("btnreset")
+            var btnreset = document.getElementById("btnreset");
             btnreset.addEventListener('click', function(event){
                 sessionStorage.clear();
-            })
+            });
 
             var theRequest = new XMLHttpRequest();
-            var lastgame = sessionStorage.getItem("game")
-            var newp1 = sessionStorage.getItem("player1")
-            var newp2 = sessionStorage.getItem("player2")
-            var url = "http://localhost:5000/game/"+lastgame
+            var lastgame = sessionStorage.getItem("game");
+            var newp1 = sessionStorage.getItem("player1");
+            var newp2 = sessionStorage.getItem("player2");
+            var url = "http://localhost:5000/game/"+lastgame;
             theRequest.open('GET',url);
             theRequest.onload = function(){
                 var theData = JSON.parse(theRequest.responseText);
                 if(theData.error){
                     sessionStorage.clear();
-                    alert("Start a nuew Game")
+                    alert("Start a nuew Game");
                 }else{
                     Object.keys(theData.board).forEach(function(keyn) {
                     value = theData.board[keyn];
                     Object.keys(value).forEach(function(keyl) {
-                        ficha = value[keyl]
+                        ficha = value[keyl];
                         if(ficha!='None'){
-                            document.getElementById(keyl+""+keyn).innerHTML =`<img src="/static/img/${ficha}.png">`
+                            document.getElementById(keyl+""+keyn).innerHTML =`<img src="/static/img/${ficha}.png">`;
                         }
                     });
                 });
@@ -290,14 +289,14 @@
                 var p2 = document.getElementById("rp2");
                 var op1 = document.getElementById("op1");
                 var op2 = document.getElementById("op2");
-                nextP.innerHTML = `<th>Next To Play: ${theData.next_move}</th>`
-                p1.innerHTML = `<th>White Pieces: ${newp1}</th>`
-                p2.innerHTML = `<th>White Pieces: ${newp2}</th>`
-                op1.innerHTML = `<option>${newp1}</option>`
-                op2.innerHTML = `<option>${newp2}</opttion>`
-                }
+                nextP.innerHTML = `<th>Next To Play: ${theData.next_move}</th>`;
+                p1.innerHTML = `<th>White Pieces: ${newp1}</th>`;
+                p2.innerHTML = `<th>White Pieces: ${newp2}</th>`;
+                op1.innerHTML = `<option>${newp1}</option>`;
+                op2.innerHTML = `<option>${newp2}</opttion>`;
+                };
             };
-            theRequest.send()
+            theRequest.send();
         </script>
     </body>
 </html>

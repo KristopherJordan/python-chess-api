@@ -2,13 +2,14 @@
 
 Work in Progress
 
+This project works with Python 3.7 or higger version
+
 ## How to run locally:
 1. Create a python virtual environment.
-Example with `pyenv`:
-- `brew install pyenv` ([pyenv Documentation](https://github.com/pyenv/pyenv))
-- `brew install pyenv-virtualenv` ([pyenv-virtualenv Documentation](https://github.com/pyenv/pyenv-virtualenv))
-- `pyenv virtualenv 3.7.3 chess`
-- `pyenv activate chess`
+- Access to chess folder
+- `sudo apt install virtualenv`
+- `virtualenv -p python3 chessenv`
+- `source chessenv/bin/activate`
 - `make install`  to install the requirements
 2. Start app with command `make start-worker`
 
@@ -21,26 +22,26 @@ Example with `pyenv`:
 - `make logs`
 
 ## Test app
-Open Postman, or other similar tools, and call http://127.0.0.1:5000/start with JSON data in following format:
+Open Postman, or other similar tools, and call http://localhost:5000/game with JSON data in following format:
 ```json
 {
-	"player1": {"name": "Namey"},
-	"player2": {"name": "Mac Chessy"}
+	"player1": {"name": "Name-a"},
+	"player2": {"name": "Name-b"}
 }
 ```
 
-Returns an HTTP 200 OK. The payload contains the following keys: `game` and `id` and `players`.
+Returns an HTTP 200 OK. The payload contains the following keys: `board` and `id` and `players`.
 
-Use the ID to continue to play using the `/move/<ID>` endpoint. Like http://127.0.0.1:5000/move/ID
+Use the ID to continue to play using the `/game/<ID>` endpoint. Like http://127.0.0.1:5000/game/ID
 
-The `move` payload should contain the player name, the position of the piece you want to move and the
+The `game` payload should contain the player name, the position of the piece you want to move and the
 position of where you want to move the piece to.
 
 Example:
 
 ```json
 {
-	"player": "Namey",
+	"player": "Name",
 	"position": "e2",
 	"new_position": "e4"
 }
