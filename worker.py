@@ -114,6 +114,53 @@ def get_game_info(game_id):
         return jsonify("Error: %s" % ex)  # TODO: Raise HTTP error
 
 
+@app.route("/games", methods=["GET"])
+def get_games():
+    logger.info("Get all games")
+    try:
+        return_data = []
+        for game_id, game in GAMES.items():
+            return_data.append(
+                {
+                    "board": game.board.to_dict(),
+                    "id": game.id,
+                    "next_move": game.get_next_move(),
+                }
+            )
+        logger.info(f"Get games returned {len(return_data)} games")
+        return jsonify(return_data)
+    except Exception as ex:
+        logger.error("Exception: %s", ex)
+        return jsonify("Error: %s" % ex)  # TODO: Raise HTTP error
+
+
+@app.route("/game/<path:game_id>", methods=["DELETE"])
+def delete_game(game_id):
+    try:
+        logger.info(f"Trying to delete game {game_id}")
+        if game_id not in GAMES:
+            logger.error(f"Game ID '{game_id}' does not exist")
+            return resource_not_found(f"Game ID '{game_id}' does not exist")
+        GAMES.pop(game_id)
+        logger.info(f"deleted game {game_id}")
+        return jsonify({}), 204
+    except Exception as ex:
+        logger.error("Exception: %s", ex)
+        return jsonify("Error: %s" % ex)  # TODO: Raise HTTP error
+
+
+@app.route("/games", methods=["DELETE"])
+def delete_games():
+    logger.info("Deleting all games")
+    try:
+        [GAMES.pop(game) for game in GAMES.copy()]
+        logger.info("all games deleted")
+        return jsonify({}), 204
+    except Exception as ex:
+        logger.error("Exception: %s", ex)
+        return jsonify("Error: %s" % ex)  # TODO: Raise HTTP error
+
+
 @app.errorhandler(404)
 def resource_not_found(e):
     return jsonify(error=str(e)), 404
