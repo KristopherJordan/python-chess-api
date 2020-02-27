@@ -63,3 +63,12 @@ def readable_position(position):
     x = X_INVERTER[str(position[1])]
     y = Y_INVERTER[str(position[0])]
     return "%s%s" % (x, y)
+
+
+def create_empty_board():
+    board = []
+    for i in range(8):
+        column = [None] * 8
+        board.append(column)
+
+    return board
