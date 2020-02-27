@@ -28,6 +28,7 @@ class Game:
             raise Exception("Turn Not Valid")
 
         self.board.move_piece(position, new_position, player)
+
         self._moves.append({"player": player.get_name(), "board": self.board})
         self._next_colour = WHITE if player.get_colour() is BLACK else BLACK
 

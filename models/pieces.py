@@ -1,6 +1,7 @@
 import logging
 from abc import ABCMeta
 
+from models.boards import create_empty_board
 from services.utils import X_INVERTER, Y_INVERTER, WHITE, BLACK
 
 logger = logging.getLogger(__name__)
@@ -12,8 +13,14 @@ move_patterns = {
     "down_right": [-1, 1],
 }
 
+POS_PIECES = {
+    WHITE: {},
+    BLACK: {},
+}
+
 
 class Pieces(metaclass=ABCMeta):
+    piece_id = 1
 
     def __init__(self, colour="", position=None):
         colour = colour.lower()
@@ -25,8 +32,11 @@ class Pieces(metaclass=ABCMeta):
         self._name = ""
         self._position = position
         self._abbreviation = None
+        self.piece_id = Pieces.piece_id
+        Pieces.piece_id += 1
 
         self.validate()
+        POS_PIECES[self.get_colour()].update({self.get_position(): self})
 
     def __repr__(self):
         return "%s %s" % (self._colour, self._abbreviation)
@@ -86,12 +96,26 @@ class Pieces(metaclass=ABCMeta):
         """
         return "%s%s" % (X_INVERTER[str(self.get_x_pos())], Y_INVERTER[str(self.get_y_pos())])
 
+    def get_position(self):
+        return self._position
+
     def set_position(self, position):
         """
         Set position tuple to piece
         :param position: tuple, (y,x)
         """
         self._position = position
+
+    def is_in_check(self, colour, board):
+        return False
+
+    def get_move_options(self, board, board_options):
+        empty_board = create_empty_board()
+        for row in empty_board.copy():
+            for column in row:
+                if self.is_movement_valid(board, (row, column)):
+                    pass
+
 
 
 class King(Pieces):
@@ -106,7 +130,14 @@ class King(Pieces):
             self._position = [0, 4]
 
     def is_movement_valid(self, board, new_position):
-        return
+        if self._position == new_position:
+            return False
+        if new_position[1] - self._position[1] not in [-1, 0, 1]:
+            return False
+        if new_position[0] - self._position[0] not in [-1, 0, 1]:
+            return False
+        # TODO: Check if new_position is in check
+        return self.is_in_check(self.get_colour(), board)
 
 
 class Queen(Pieces):
