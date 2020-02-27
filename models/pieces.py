@@ -1,8 +1,7 @@
 import logging
 from abc import ABCMeta
 
-from models.boards import create_empty_board
-from services.utils import X_INVERTER, Y_INVERTER, WHITE, BLACK
+from services.utils import X_INVERTER, Y_INVERTER, WHITE, BLACK, create_empty_board
 
 logger = logging.getLogger(__name__)
 
@@ -115,7 +114,6 @@ class Pieces(metaclass=ABCMeta):
             for column in row:
                 if self.is_movement_valid(board, (row, column)):
                     pass
-
 
 
 class King(Pieces):

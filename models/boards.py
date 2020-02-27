@@ -1,18 +1,9 @@
 import logging
 
 from models.pieces import King, Queen, Pawn, Bishop, Rook, Knight, Pieces, POS_PIECES
-from services.utils import Y_INVERTER, X_INVERTER, readable_position, BLACK, WHITE
+from services.utils import Y_INVERTER, X_INVERTER, readable_position, BLACK, WHITE, create_empty_board
 
 logger = logging.getLogger(__name__)
-
-
-def create_empty_board():
-    board = []
-    for i in range(8):
-        column = [None] * 8
-        board.append(column)
-
-    return board
 
 
 class Board:
@@ -76,7 +67,6 @@ class Board:
                 if not existing_piece or existing_piece.get_colour() != colour:
                     continue
                 move_options = existing_piece.get_move_options()
-
 
     @staticmethod
     def is_in_bounds(position):
