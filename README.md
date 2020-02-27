@@ -6,12 +6,20 @@ This project works with Python 3.7 or higger version
 
 ## How to run locally:
 1. Create a python virtual environment.
-- Access to chess folder
+
+Example with `pyenv`:
+- `brew install pyenv` ([pyenv Documentation](https://github.com/pyenv/pyenv))
+- `brew install pyenv-virtualenv` ([pyenv-virtualenv Documentation](https://github.com/pyenv/pyenv-virtualenv))
+- `pyenv virtualenv 3.7.3 chess`
+- `pyenv activate chess`
+
+Example with `virtualenv`:
 - `sudo apt install virtualenv`
 - `virtualenv -p python3 chessenv`
 - `source chessenv/bin/activate`
-- `make install`  to install the requirements
-2. Start app with command `make start-worker`
+
+2. Install the requirements with `make install`
+3. Start app with command `make start-worker`
 
 ## How to run in Docker:
 1. Build docker image:

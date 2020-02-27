@@ -267,7 +267,8 @@
             var newp1 = sessionStorage.getItem("player1");
             var newp2 = sessionStorage.getItem("player2");
             var url = "http://localhost:5000/game/"+lastgame;
-            theRequest.open('GET',url);
+            if(lastgame != null){
+                theRequest.open('GET',url);
             theRequest.onload = function(){
                 var theData = JSON.parse(theRequest.responseText);
                 if(theData.error){
@@ -296,7 +297,8 @@
                 op2.innerHTML = `<option>${newp2}</opttion>`;
                 };
             };
-            theRequest.send();
+            theRequest.send();                
+            }
         </script>
     </body>
 </html>
