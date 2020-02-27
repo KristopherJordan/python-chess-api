@@ -15,7 +15,8 @@ class TestGameHandlers(TestCase):
         self.player2_name = "Black Player"
 
     def tearDown(self):
-        pass
+        # Delete all games between tests
+        self.app.delete(f'/games')
 
     def test_create_game(self):
         payload = {
@@ -61,6 +62,27 @@ class TestGameHandlers(TestCase):
         resp = self.app.get(f'/game/{fake_game_id}')
         self.assertEqual(resp.status_code, 404)
         self.assertEqual(resp.json['error'], f"Game ID '{fake_game_id}' does not exist")
+
+    def test_get_all_games(self):
+        game_id1 = self._create_game()
+        game_id2 = self._create_game()
+        resp = self.app.get(f'/games')
+        self._check_ok_resp(resp)
+        self.assertEqual(len(resp.json), 2)
+        self.assertIsInstance(resp.json, list)
+        self.assertEqual(resp.json[0]['id'], game_id1)
+        self.assertEqual(resp.json[1]['id'], game_id2)
+
+    def test_delete_game(self):
+        game_id = self._create_game()
+        resp = self.app.delete(f'/game/{game_id}')
+        self.assertEqual(resp.status_code, 204)
+
+    def test_delete_all_games(self):
+        game_id1 = self._create_game()
+        game_id2 = self._create_game()
+        resp = self.app.delete(f'/games')
+        self.assertEqual(resp.status_code, 204)
 
     def _check_ok_resp(self, resp):
         self.assertEqual(resp.status_code, 200)
