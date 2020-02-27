@@ -9,7 +9,9 @@ jobs:
     steps:
       - checkout
       - python/load-cache
-      - python/install-deps
+      - run:
+          - command: sudo pip install -r requirements.txt
+          - name: Install Requirements
       - python/save-cache
       - run:
           command: pytest tests/test_*.py
