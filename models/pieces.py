@@ -35,7 +35,7 @@ class Pieces(metaclass=ABCMeta):
         Pieces.piece_id += 1
 
         self.validate()
-        POS_PIECES[self.get_colour()].update({self.get_position(): self})
+        POS_PIECES[self.get_colour()].update({"%s,%s" % (self.get_y_pos(), self.get_x_pos()): self})
 
     def __repr__(self):
         return "%s %s" % (self._colour, self._abbreviation)
