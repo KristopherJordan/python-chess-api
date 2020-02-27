@@ -31,7 +31,7 @@ class Board:
             raise Exception("Move %s to %s is not valid" % (piece, readable_position(new_position)))
 
         self._place_piece(piece, new_position)
-        POS_PIECES[piece.get_colour()].update({piece.get_position(): piece})
+        POS_PIECES[piece.get_colour()].update({"%s,%s" % (piece.get_y_pos(), piece.get_x_pos()): piece})
 
     def _place_piece(self, piece, new_position):
         existing_piece = self._board[new_position[0]][new_position[1]]
@@ -76,7 +76,7 @@ class Board:
 
     def _create_empty_board(self):
         self._board = create_empty_board()
-        for i in self._board:
+        for i, row in enumerate(self._board):
             if i == 0:
                 self._set_pieces(i, BLACK)
             elif i == 1:
