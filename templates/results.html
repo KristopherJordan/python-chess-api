@@ -1,119 +1,304 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title></title>
+        <title>Chess App</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
         <meta charset="UTF-8">
         <style>
             .chess-board { border-spacing: 0; border-collapse: collapse; }
             .chess-board th { padding: .5em; }
-            .chess-board td { border: 1px solid; width: 7em; height: 7em; }
-            .chess-board .light { background: #eee; }
-            .chess-board .dark { background: #000; }
+            .chess-board td { border: 0px solid; width: 4em; height: 4em; }
+            .chess-board .light { background: #A3A3A3; }
+            .chess-board .dark { background: #888888; }
+
+            #sidebar {
+            margin-left: 20px;
+            min-width: 200px;
+            height: 100%;
+            width: 160px;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            left: 0;
+            overflow-x: hidden;
+            overflow-y: hidden;
+            padding-top: 20px;
+            }
+
+            #sidebaritem {
+                border-style: inset;
+            }
+
+            .main {
+            margin-left: 250px;
+            padding: 0px 10px;
+            }
         </style>
     </head>
     <body>
-        <table class="chess-board">
-            <tbody>
-                <tr>
-                    <th></th>
-                    <th>a</th>
-                    <th>b</th>
-                    <th>c</th>
-                    <th>d</th>
-                    <th>e</th>
-                    <th>f</th>
-                    <th>g</th>
-                    <th>h</th>
-                </tr>
-                <tr>
-                    <th>8</th>
-                    <td class="light"></td>
-                    <td class="dark"></td>
-                    <td class="light"></td>
-                    <td class="dark"></td>
-                    <td class="light"></td>
-                    <td class="dark"></td>
-                    <td class="light"></td>
-                    <td class="dark"></td>
-                </tr>
-                <tr>
-                    <th>7</th>
-                    <td class="dark"></td>
-                    <td class="light"></td>
-                    <td class="dark"></td>
-                    <td class="light"></td>
-                    <td class="dark"></td>
-                    <td class="light"></td>
-                    <td class="dark"></td>
-                    <td class="light"></td>
-                </tr>
-                <tr>
-                    <th>6</th>
-                    <td class="light"></td>
-                    <td class="dark"></td>
-                    <td class="light"></td>
-                    <td class="dark"></td>
-                    <td class="light"></td>
-                    <td class="dark"></td>
-                    <td class="light"></td>
-                    <td class="dark"></td>
-                </tr>
-                <tr>
-                    <th>5</th>
-                    <td class="dark"></td>
-                    <td class="light"></td>
-                    <td class="dark"></td>
-                    <td class="light"></td>
-                    <td class="dark"></td>
-                    <td class="light"></td>
-                    <td class="dark"></td>
-                    <td class="light"></td>
-                </tr>
-                <tr>
-                    <th>4</th>
-                    <td class="light"></td>
-                    <td class="dark"></td>
-                    <td class="light"></td>
-                    <td class="dark"></td>
-                    <td class="light"></td>
-                    <td class="dark"></td>
-                    <td class="light"></td>
-                    <td class="dark"></td>
-                </tr>
-                <tr>
-                    <th>3</th>
-                    <td class="dark"></td>
-                    <td class="light"></td>
-                    <td class="dark"></td>
-                    <td class="light"></td>
-                    <td class="dark"></td>
-                    <td class="light"></td>
-                    <td class="dark"></td>
-                    <td class="light"></td>
-                </tr>
-                <tr>
-                    <th>2</th>
-                    <td class="light"></td>
-                    <td class="dark"></td>
-                    <td class="light"></td>
-                    <td class="dark"></td>
-                    <td class="light"></td>
-                    <td class="dark"></td>
-                    <td class="light"></td>
-                    <td class="dark"></td>
-                </tr>
-                <tr>
-                    <th>1</th>
-                    <td class="dark"></td>
-                    <td class="light"></td>
-                    <td class="dark"></td>
-                    <td class="light"></td>
-                    <td class="dark"></td>
-                    <td class="light"></td>
-                    <td class="dark"></td>
-                    <td class="light"></td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="container">
+            <div class="" id="sidebar">
+                <div class="row" id="sidebaritem">
+                    <div class="col">
+                        <form>
+                            <h4>New match</h4>
+                            <div class="form-group">
+                                <div class="col">
+                                    <input id="p1" type="text" class="form-control" placeholder="White pieces player">
+                                </div>
+                                <div class="col">
+                                    <input id="p2" type="text" class="form-control" placeholder="Black pieces player">
+                                </div> 
+                            </div>  
+                            <button id="btnstart" type="submit" class="btn btn-primary">New Game</button>
+                        </form>
+                    </div>
+                </div>
+                <br>
+                <div class="row" id="sidebaritem">
+                    <div class="col">
+                        <form>
+                            <h4>Make a Move</h4>
+                            <div class="form-group">
+                                <label for="exampleFormControlSelect1">Select Player</label>
+                                <select class="form-control" id="whoplay">
+                                  <option id="op1">1</option>
+                                  <option id="op2">2</option>
+                                </select>
+                              </div>
+                              <div class="form-group">
+                                <div class="col">
+                                    <input id="initpos" type="text" class="form-control" placeholder="Initial position">
+                                </div>
+                                <div class="col">
+                                    <input id="endpos" type="text" class="form-control" placeholder="End position">
+                                </div> 
+                            </div> 
+                            <button id="btnplay" type="submit" class="btn btn-secondary">Move</button>
+                        </form>
+                    </div>
+                </div>
+                <br>
+                <div class="row" id="sidebaritem">
+                    <div class="col">
+                        <form>
+                            <h4>Clear Match</h4>
+                            <button id="btnreset" type="submit" class="btn btn-dark">Reset</button>
+                        </form>
+                    </div>                                    
+                </div>
+            </div>
+        </div>
+        <div class="container main">
+            <div class="row">
+                <div class="col-6">
+
+                        <table>
+                                <tbody>
+                                    <tr>
+                                        <th id="rp1"></th>
+                                    </tr>
+                                    <tr>
+                                        <th id="rp2"></th>
+                                    </tr>
+                                    <tr>
+                                        <th id="nextp"></th>
+                                    </tr>
+                                        <th id="game"></th>
+                                </tbody>
+                            </table>
+                            <br>
+                            <table class="chess-board">
+                                <tbody>
+                                    <tr>
+                                        <th>8</th>
+                                        <td id="a8" class="light"></td>
+                                        <td id="b8" class="dark"></td>
+                                        <td id="c8" class="light"></td>
+                                        <td id="d8" class="dark"></td>
+                                        <td id="e8" class="light"></td>
+                                        <td id="f8" class="dark"></td>
+                                        <td id="g8" class="light"></td>
+                                        <td id="h8" class="dark"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>7</th>
+                                        <td id="a7" class="dark"></td>
+                                        <td id="b7" class="light"></td>
+                                        <td id="c7" class="dark"></td>
+                                        <td id="d7" class="light"></td>
+                                        <td id="e7" class="dark"></td>
+                                        <td id="f7" class="light"></td>
+                                        <td id="g7" class="dark"></td>
+                                        <td id="h7" class="light"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>6</th>
+                                        <td id="a6" class="light"></td>
+                                        <td id="b6" class="dark"></td>
+                                        <td id="c6" class="light"></td>
+                                        <td id="d6" class="dark"></td>
+                                        <td id="e6" class="light"></td>
+                                        <td id="f6" class="dark"></td>
+                                        <td id="g6" class="light"></td>
+                                        <td id="h6" class="dark"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>5</th>
+                                        <td id="a5" class="dark"></td>
+                                        <td id="b5" class="light"></td>
+                                        <td id="c5" class="dark"></td>
+                                        <td id="d5" class="light"></td>
+                                        <td id="e5" class="dark"></td>
+                                        <td id="f5" class="light"></td>
+                                        <td id="g5" class="dark"></td>
+                                        <td id="h5" class="light"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>4</th>
+                                        <td id="a4" class="light"></td>
+                                        <td id="b4" class="dark"></td>
+                                        <td id="c4" class="light"></td>
+                                        <td id="d4" class="dark"></td>
+                                        <td id="e4" class="light"></td>
+                                        <td id="f4" class="dark"></td>
+                                        <td id="g4" class="light"></td>
+                                        <td id="h4" class="dark"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>3</th>	
+                                        <td id="a3" class="dark"></td>	
+                                        <td id="b3" class="light"></td>	
+                                        <td id="c3" class="dark"></td>	
+                                        <td id="d3" class="light"></td>
+                                        <td id="e3" class="dark"></td>
+                                        <td id="f3" class="light"></td>
+                                        <td id="g3" class="dark"></td>
+                                        <td id="h3" class="light"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>2</th>
+                                        <td id="a2" class="light"></td>
+                                        <td id="b2" class="dark"></td>
+                                        <td id="c2" class="light"></td>
+                                        <td id="d2" class="dark"></td>
+                                        <td id="e2" class="light"></td>
+                                        <td id="f2" class="dark"></td>
+                                        <td id="g2" class="light"></td>
+                                        <td id="h2" class="dark"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>1</th>
+                                        <td id="a1" class="dark"></td>
+                                        <td id="b1" class="light"></td>
+                                        <td id="c1" class="dark"></td>
+                                        <td id="d1" class="light"></td>
+                                        <td id="e1" class="dark"></td>
+                                        <td id="f1" class="light"></td>
+                                        <td id="g1" class="dark"></td>
+                                        <td id="h1" class="light"></td>
+                                    </tr>
+                                    <tr>
+                                        <th></th>
+                                        <th>a</th>
+                                        <th>b</th>
+                                        <th>c</th>
+                                        <th>d</th>
+                                        <th>e</th>
+                                        <th>f</th>
+                                        <th>g</th>
+                                        <th>h</th>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <br>
+                </div>
+            </div>
+        </div>
+        <script>
+            var btnstart = document.getElementById("btnstart");
+            btnstart.addEventListener('click', function(event){
+                player1 = document.getElementById('p1').value;
+                player2 = document.getElementById('p2').value;
+                var theRequest = new XMLHttpRequest();
+                theRequest.open('POST','http://localhost:5000/game');
+                theRequest.setRequestHeader("Content-Type", "application/json");
+                theRequest.onload = function(){
+                    var resData= JSON.parse(theRequest.responseText);
+                    sessionStorage.setItem("game",resData.id);
+                    sessionStorage.setItem("player1",resData.players.white);
+                    sessionStorage.setItem("player2",resData.players.black);
+                };
+                theRequest.send(JSON.stringify({ "player1": {"name": player1 }, "player2": {"name": player2 }}));
+                
+            });
+
+            var btnplay = document.getElementById("btnplay");
+            btnplay.addEventListener('click', function(event){
+                playername = document.getElementById('whoplay').value;
+                initpos = document.getElementById('initpos').value;
+                endtpos = document.getElementById('endpos').value;
+                var lastgame = sessionStorage.getItem("game");
+                var url = "http://localhost:5000/game/"+lastgame;
+                var theRequest = new XMLHttpRequest();
+                theRequest.open('PUT', url);
+                theRequest.setRequestHeader("Content-Type", "application/json");
+                theRequest.onload = function(){
+                    var resData= JSON.parse(theRequest.responseText);
+                    resData.prop = 'exist';
+                    if(resData.hasOwnProperty('prop')){
+                        if(resData['prop']){
+                        }
+                    }else{
+                        alert(resData);
+                    }
+                }
+                theRequest.send(JSON.stringify({ "player": playername, "position": initpos, "new_position": endtpos}));
+                
+            });
+
+            var btnreset = document.getElementById("btnreset");
+            btnreset.addEventListener('click', function(event){
+                sessionStorage.clear();
+            });
+
+            var theRequest = new XMLHttpRequest();
+            var lastgame = sessionStorage.getItem("game");
+            var newp1 = sessionStorage.getItem("player1");
+            var newp2 = sessionStorage.getItem("player2");
+            var url = "http://localhost:5000/game/"+lastgame;
+            if(lastgame != null){
+                theRequest.open('GET',url);
+            theRequest.onload = function(){
+                var theData = JSON.parse(theRequest.responseText);
+                if(theData.error){
+                    sessionStorage.clear();
+                    alert("Start a nuew Game");
+                }else{
+                    Object.keys(theData.board).forEach(function(keyn) {
+                    value = theData.board[keyn];
+                    Object.keys(value).forEach(function(keyl) {
+                        ficha = value[keyl];
+                        if(ficha!='None'){
+                            document.getElementById(keyl+""+keyn).innerHTML =`<img src="/static/img/${ficha}.png">`;
+                        }
+                    });
+                });
+                
+                var nextP = document.getElementById("nextp");
+                var p1 = document.getElementById("rp1");
+                var p2 = document.getElementById("rp2");
+                var op1 = document.getElementById("op1");
+                var op2 = document.getElementById("op2");
+                nextP.innerHTML = `<th>Next To Play: ${theData.next_move}</th>`;
+                p1.innerHTML = `<th>White Pieces: ${newp1}</th>`;
+                p2.innerHTML = `<th>White Pieces: ${newp2}</th>`;
+                op1.innerHTML = `<option>${newp1}</option>`;
+                op2.innerHTML = `<option>${newp2}</opttion>`;
+                };
+            };
+            theRequest.send();                
+            }
+        </script>
     </body>
 </html>
